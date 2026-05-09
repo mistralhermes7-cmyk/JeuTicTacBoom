@@ -445,6 +445,90 @@
             'ck', 'nk', 'nd', 'nt', 'st', 'ct', 'pt', 'mp', 'ng', 'lt'
         ];
 
+        function normalizeWord(word) {
+            return word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+        }
+
+        const VALID_WORDS = [
+            'AMOUR', 'MAISON', 'CHIEN', 'CHAT', 'VOITURE', 'ECOLE', 'FAMILLE', 'TRAVAIL',
+            'VILLE', 'PAYS', 'MONDE', 'JOUR', 'NUIT', 'MER', 'MONTAGNE', 'FORET',
+            'FLEUR', 'OISEAU', 'JOUER', 'MANGER', 'BOIRE', 'DORMIR', 'COURIR', 'PARLER',
+            'LIRE', 'ECRIRE', 'VOIR', 'ENTENDRE', 'SENTIR', 'AIMER', 'DETESTER', 'AIDER',
+            'DONNER', 'PRENDRE', 'METTRE', 'DIRE', 'POUVOIR', 'SAVOIR', 'VOULOIR',
+            'ALLER', 'VENIR', 'ARRIVER', 'PARTIR', 'RESTER', 'CHANGER', 'COMPRENDRE', 'CHOISIR',
+            'APPRENDRE', 'JOUET', 'FRANCE', 'PARIS', 'AMIS', 'AMIES', 'PAPA', 'MAMAN',
+            'FRERE', 'SOEUR', 'HOMME', 'FEMME', 'ENFANT', 'GARCON', 'FILLE', 'JEUNE', 'VIEUX',
+            'BEAU', 'BELLE', 'FORT', 'FAIBLE', 'RAPIDE', 'LENT', 'CONTENT', 'TRISTE',
+            'NOUVEAU', 'BON', 'MEILLEUR', 'MAUVAIS', 'CHAUD', 'FROID', 'DOULOUREUX',
+            'SIMPLE', 'COMPLEXE', 'PRATIQUE', 'PROPRE', 'SALE', 'BLEU', 'ROUGE', 'VERT',
+            'JAUNE', 'NOIR', 'BLANC', 'GRIS', 'ROSE', 'ORANGE', 'MARCHE', 'CHANSON', 'MUSIQUE',
+            'DANSE', 'THEATRE', 'CINEMA', 'LUMIERE', 'OMBRE', 'COULEUR', 'POESIE',
+            'HISTOIRE', 'DEFI', 'PROJET', 'JEUX', 'BOMBE', 'TEMPS', 'HEURE', 'MINUTE', 'SECONDE',
+            'SOURIRE', 'RIEN', 'QUELQUE', 'QUOI', 'POURQUOI', 'PARCE', 'QUE', 'COMMENT',
+            'QUAND', 'OU', 'AVANT', 'APRES', 'PENDANT', 'TOUJOURS', 'JAMAIS', 'PARFOIS',
+            'TRES', 'PEU', 'BEAUCOUP', 'TROP', 'ASSEZ', 'SEULEMENT', 'AVEC', 'SANS', 'SUR',
+            'DANS', 'DEVANT', 'DERIERE', 'A COTE', 'SOUS', 'SUS', 'ENTRE', 'AUTOUR', 'CONTRE',
+            'GRAND', 'PETIT', 'MINCE', 'GROS', 'COURT', 'LONG', 'HAUT', 'BAS', 'LENTEMENT',
+            'RAPIDEMENT', 'FACILE', 'DIFFICILE', 'IMPORTANT', 'URGENCE', 'GAUCHE', 'DROITE',
+            'NORD', 'SUD', 'EST', 'OUEST', 'CHEMIN', 'ROUTE', 'PONT', 'LAC', 'RIVIERE', 'OCEAN',
+            'PLAGE', 'SABLE', 'ROCHE', 'NEIGE', 'PLUIE', 'VENT', 'TEMPETE', 'SOLEIL', 'LUNE',
+            'ETOILE', 'CIEL', 'NUAGE', 'ORAGE', 'CHAINE', 'ARC', 'CERCLE', 'CARRE', 'TRIANGLE',
+            'MOT', 'PHRASE', 'PAROLE', 'PARAGRAPHE', 'TEXTE', 'LIVRE', 'PAGE', 'SOURCE',
+            'CODE', 'CLE', 'PORTE', 'FENETRE', 'VOLET', 'MUR', 'TABLE', 'CHAIR', 'LIT',
+            'CUISINE', 'SALLE', 'BUREAU', 'JARDIN', 'PARC', 'HOPITAL', 'EGLISE', 'MAGASIN',
+            'BIBLIOTHEQUE', 'USINE', 'MAIRIE', 'STATION', 'GARE', 'AEROPORT',
+            'STATIONNEMENT', 'TRANSFORMATION', 'INTERACTION', 'COMMUNICATION',
+            'ANTIQUITE', 'SUPERHERO', 'AUTOMOBILE', 'MANUEL', 'MUSEE', 'NATURE', 'SOCIETE',
+            'RELATION', 'CREATION', 'IMAGINATION', 'GENERATION', 'INFORMATION',
+            'EDUCATION', 'DIRECTION', 'PRODUCTION', 'REPRODUCTION', 'DESTRUCTION',
+            'CONSTRUCTION', 'IMMERSION', 'PROFESSION', 'OPPOSITION', 'POSITION',
+            'CONDITION', 'INJECTION', 'COLLECTION', 'SELECTION', 'ELECTION',
+            'PRIVILEGE', 'RESPONSABLE', 'DISPONIBLE', 'INCROYABLE', 'FLEXIBLE',
+            'HUMORISTE', 'MUSICIEN', 'PHOTO', 'PHYSIQUE', 'TELEPHONE', 'PHARMACIE',
+            'PHARE', 'MIRACLE', 'ANIMATION', 'FASCINATION', 'DECISION', 'MISSION',
+            'VERSION', 'VISION', 'CONCLUSION', 'ACTIVITE', 'CIVILITE', 'CREATIVITE', 'ACTIVITY', 'CIVILITY', 'CREATIVITY',
+            'REALISATION', 'REALISME', 'SOCIALISME', 'OPTIMISME', 'ANTIDOTE',
+            'SUBMARIN', 'SUBSTITUT', 'SUPERIEUR', 'OVERDOSE', 'UNDERGROUND',
+            'NONCHALANT', 'NONVIOLENCE', 'SEMICOLONNE', 'SEMIFINAL', 'MULTICULTURE',
+            'MULTIMEDIA', 'LINGE', 'PINGOUIN', 'RINGARD', 'BRINGUE', 'LINGUISTIQUE',
+            'BUSINESS', 'USEFUL', 'USELESS', 'ROTATE', 'SITUATE', 'CREATE',
+            'REALIZE', 'UTILIZE', 'ORGANIZE', 'FAMILY', 'DISCUSSION', 'DISSIMULER',
+            'ANTICIPATION', 'ANTIBIOTIQUE', 'ANTICHAMBRE', 'ANTIRIDES', 'ANTIVIRUS',
+            'SHAMPOOING', 'SHERIFF', 'SHAMAN', 'GHOST', 'LIGHT', 'VACUUM', 'FEELING',
+            'ZOOM', 'BROOK', 'STRATEGIE', 'STRASBOURG', 'SCRABBLE', 'BACK', 'CHECK',
+            'TICKET', 'BANK', 'TANK', 'LECTURE', 'ACTEUR', 'CONTACT', 'OPTIMISTE',
+            'CONCEPT', 'APTE', 'FAULT', 'VOLT', 'COURAGEOUS', 'SERIOUS', 'CURIOUS'
+        ];
+
+        const VALID_WORD_SET = new Set(VALID_WORDS.map(normalizeWord));
+
+        function buildFragmentWordMap() {
+            const map = {};
+            FRAGMENTS.forEach(fragment => {
+                const normalizedFragment = normalizeWord(fragment);
+                const words = VALID_WORDS
+                    .map(normalizeWord)
+                    .filter(word => word.includes(normalizedFragment));
+                map[normalizedFragment] = Array.from(new Set(words));
+            });
+            return map;
+        }
+
+        const WORDS_BY_FRAGMENT = buildFragmentWordMap();
+        const AVAILABLE_FRAGMENTS = Object.keys(WORDS_BY_FRAGMENT).filter(fragment => WORDS_BY_FRAGMENT[fragment].length > 0);
+
+        function getWordsForFragment(fragment) {
+            return WORDS_BY_FRAGMENT[normalizeWord(fragment)] || [];
+        }
+
+        function isValidWord(word) {
+            return VALID_WORD_SET.has(normalizeWord(word));
+        }
+
+        function isValidWordForFragment(word, fragment) {
+            return getWordsForFragment(fragment).includes(normalizeWord(word));
+        }
+
         // ============ STATE MANAGEMENT ============
         let gameState = {
             players: [],
@@ -543,7 +627,8 @@
             }
             
             // Nouveau fragment
-            gameState.currentFragment = FRAGMENTS[Math.floor(Math.random() * FRAGMENTS.length)].toUpperCase();
+            const fragmentIndex = Math.floor(Math.random() * AVAILABLE_FRAGMENTS.length);
+            gameState.currentFragment = AVAILABLE_FRAGMENTS[fragmentIndex].toUpperCase();
             document.getElementById('fragmentDisplay').textContent = gameState.currentFragment;
             
             // Nouveau timer
@@ -586,7 +671,10 @@
         }
 
         function submitWord() {
-            const word = document.getElementById('wordInput').value.trim().toUpperCase();
+            const rawWord = document.getElementById('wordInput').value.trim();
+            const word = rawWord.toUpperCase();
+            const normalizedWord = normalizeWord(rawWord);
+            const normalizedFragment = normalizeWord(gameState.currentFragment);
             
             if (!word) {
                 showMessage('Veuillez entrer un mot !', 'invalid');
@@ -598,8 +686,18 @@
                 return;
             }
             
+            if (!isValidWord(rawWord)) {
+                showMessage(`✗ "${word}" n'est pas un mot reconnu.`, 'invalid');
+                return;
+            }
+
+            if (!isValidWordForFragment(rawWord, gameState.currentFragment)) {
+                showMessage(`✗ "${word}" n'est pas un mot valide pour le fragment "${gameState.currentFragment}".`, 'invalid');
+                return;
+            }
+            
             // Vérifier si le mot contient le fragment
-            if (word.includes(gameState.currentFragment)) {
+            if (normalizedWord.includes(normalizedFragment)) {
                 showMessage(`✓ "${word}" est valide !`, 'valid');
                 gameState.wordHistory.unshift({
                     player: gameState.players[gameState.currentPlayerIndex].name,
